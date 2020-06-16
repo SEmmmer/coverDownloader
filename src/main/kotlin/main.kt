@@ -1,19 +1,11 @@
-import okhttp3.*
-import okhttp3.HttpUrl.get
 import org.openqa.selenium.*
 import org.openqa.selenium.firefox.FirefoxDriver
 import java.io.File
-import java.io.IOException
-import java.net.HttpURLConnection
 import java.net.URL
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.nio.file.Files
 
 suspend fun main(args: Array<String>) {
     System.setProperty("webdriver.gecko.driver", "geckodriver")
-//    println(localExam("aaa"))
-    downloadCover("")
+    println(checkUploader(""))
 }
 
 suspend fun coverList(uploader: String): List<String> {
@@ -25,7 +17,11 @@ suspend fun coverList(uploader: String): List<String> {
 //        driver.get("https://www.youtube.com/channel/$uploader/videos")
         driver.executeScript("window.scrollBy(0,1000)")
         driver.findElements(By.id("thumbnail")).toList().forEach {
-            covers.add(it.getAttribute("href"))
+            covers.add(
+                it
+                    .getAttribute("href")
+                    .replace("https://www.youtube.com/watch?v=", "")
+            )
         }
     } finally {
         driver.quit()
@@ -49,12 +45,9 @@ suspend fun downloadCover(videoName: String, videoTime: String) {
 
 
 suspend fun checkUploader(videoName: String): Boolean {
+//    val url = "https://www.youtube.com/watch?v=$videoName"
+    val url = "https://www.youtube.com/watch?v=-wNSFmqhQsU"
+    val website = URL(url).readText()
+    File("website.txt").writeText(website)
     return true
-}
-
-fun videoList(pages: String): List<String> {
-    return listOf(
-        "aaaa",
-        "nnnn"
-    )
 }
