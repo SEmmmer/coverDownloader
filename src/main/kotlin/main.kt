@@ -1,15 +1,18 @@
+import com.google.gson.Gson
+import netscape.javascript.JSObject
+import org.jsoup.Jsoup
 import org.openqa.selenium.*
 import org.openqa.selenium.firefox.FirefoxDriver
 import java.io.File
 import java.net.URL
 
 suspend fun main(args: Array<String>) {
+//    val uploader = args[0]
     System.setProperty("webdriver.gecko.driver", "geckodriver")
-    println(checkUploader(""))
+    timeAndCheck("", "")
 }
 
 suspend fun coverList(uploader: String): List<String> {
-
     val driver = FirefoxDriver()
     val covers = mutableListOf<String>()
     try {
@@ -44,10 +47,28 @@ suspend fun downloadCover(videoName: String, videoTime: String) {
 }
 
 
-suspend fun checkUploader(videoName: String): Boolean {
+suspend fun timeAndCheck(videoName: String, uploader: String): String {
 //    val url = "https://www.youtube.com/watch?v=$videoName"
     val url = "https://www.youtube.com/watch?v=-wNSFmqhQsU"
-    val website = URL(url).readText()
-    File("website.txt").writeText(website)
-    return true
+    val doc = Jsoup.connect(url).get()
+    var i = 1
+    doc.select("body script").forEach {
+        if (it.toString().contains("window[\"ytInitialData\"]")) {
+            val app = it.html()
+                .toString()
+                .split("window[\"ytInitialPlayerResponse\"] = ")[1]
+                .split("if (window.ytcsi)")[0]
+                .replace(";", "")
+            val json = Gson().toJson(app)
+            println(json)
+            println(i++)
+        }
+    }
+
+
+    val uploadTime = ""
+    val startTimeStamp = ""
+    val findUploader = ""
+//    File("website.html").writeText(doc.toString())
+    return uploader
 }
